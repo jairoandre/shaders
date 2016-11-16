@@ -1,11 +1,14 @@
 PShader toon;
+long start;
 
 void setup() {
-  size(640, 360, P3D);
+  size(800, 600, P3D);
+  camera(70.0, 35.0, 120.0, 50.0, 50.0, 0.0, 
+       0.0, 1.0, 0.0);
   noStroke();
-  fill(204);
+  start = System.currentTimeMillis();
   toon = loadShader("fragmentShader.glsl", "vertexShader.glsl");
-  toon.set("fraction", 1.0);
+  toon.set("time", 0.0);
 }
 
 void draw() {
@@ -15,5 +18,8 @@ void draw() {
   float dirX = (mouseX / float(width) - 0.5) * 2;
   directionalLight(204, 204, 204, -dirX, -dirY, -1);
   translate(width/2, height/2);
-  sphere(120);
+  sphereDetail(200);
+  sphere(20);
+  float time = 0.00025 * (System.currentTimeMillis() - start);
+  toon.set("time", time);
 }

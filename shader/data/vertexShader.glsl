@@ -179,6 +179,7 @@ float pnoise(vec3 P, vec3 rep)
 uniform mat4 transform;
 uniform mat3 normalMatrix;
 uniform vec3 lightNormal;
+uniform float time;
 
 attribute vec4 position;
 attribute vec4 color;
@@ -194,20 +195,19 @@ float turbulence( vec3 p ) {
   float t = -.5;
   for (float f = 1.0 ; f <= 10.0 ; f++ ){
       float power = pow( 2.0, f );
-      t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
+      t += abs(pnoise(vec3(power * p), vec3(10.0)) / power);
   }
   return t;
 }
 
 void main() {
-  noise = 10.0 *  -.10 * turbulence( .5 * normal );
-  float b = 5.0 * pnoise( 0.05 * position + vec3( 0.5 ), vec3( 20.0 ) );
+  vertColor = color;
+  noise = 10.0 *  -.10 * turbulence( .5 * normal + time);
+  float b = 5.0 * pnoise( 0.05 * vec3(position) + vec3( 2. * time ), vec3( 100.0 ) );
   float displacement = - noise + b;
 
-  vec3 newPosition = position + normal * displacement;
+  vec3 newPosition = vec3(position) + normal * displacement;
 
-  gl_Position = transform * newPosition;
-  vertColor = color;
-  vertNormal = normalize(normalMatrix * normal);
-  vertLightDir = -lightNormal;
+  gl_Position = transform * vec4( newPosition, 1.0 );
+  //gl_Position = vec4(time, 0., 0., 1.0);
 }
